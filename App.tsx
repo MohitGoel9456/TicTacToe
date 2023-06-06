@@ -25,7 +25,8 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 import Home from './src/screens/Home';
-
+import StackNavigator from './src/navigation';
+import { StoreProvider } from './src/store/Store';
 
 function App(): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
@@ -36,7 +37,9 @@ function App(): JSX.Element {
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <Home />
+      <StoreProvider>
+        <StackNavigator />
+      </StoreProvider>
     </SafeAreaView>
   );
 }

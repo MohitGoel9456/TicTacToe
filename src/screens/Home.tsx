@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {
     View,
     Text,
@@ -6,9 +6,12 @@ import {
     TouchableOpacity,
     FlatList
 } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+
 import { CustomButton as Button } from '../components/Button'; // need to add alias path
 import { strings } from '../constants/stringConstants';
-
+import { StoreContext } from '../store/Store';
+import { navigate } from '../utils/navigationUtils';
 
 const Home = (): JSX.Element => {
 
@@ -17,14 +20,21 @@ const Home = (): JSX.Element => {
     const [winner, setWinner] = useState(null);
     const [isComputerTurn, setIsComputerTurn] = useState(false);
 
+    const { playerScore, updatePlayerScore, updateComputerScore } = useContext(StoreContext);
+
+    const navigation = useNavigation();
+
     useEffect(() => {
         if (currentPlayer === 'O' && isComputerTurn && !winner) {
             setTimeout(makeComputerMove, 500);
         }
-    }, [currentPlayer]);
+        if (winner) {
+            winner === 'X' ? updatePlayerScore() : updateComputerScore();
+        }
+    }, [currentPlayer, winner]);
 
 
-    const checkWinner = (board: string[], player: string) => {
+    const checkWinner = (board: string[], player: string): void => {
         const winningCombinations = [
             [0, 1, 2],
             [3, 4, 5],
@@ -58,7 +68,6 @@ const Home = (): JSX.Element => {
     };
 
     const makeComputerMove = (): void => {
-        console.log("makeComputerMove")
         const availableMoves = markers.reduce((result: number[], cell: string, index: number) =>
             cell === '' ? [...result, index] : result, []
         )
@@ -67,6 +76,7 @@ const Home = (): JSX.Element => {
         handleMove(computerIndex);
     }
 
+    //need to replace Text with own custom component
     const renderCell = ({ item, index }: { item: string; index: number }): JSX.Element => (
         <TouchableOpacity
             style={styles.cell}
@@ -87,13 +97,18 @@ const Home = (): JSX.Element => {
         />
     );
 
-    const startGame = (): void => {
+    const onStartGame = (): void => {
         setMarkers(Array(9).fill(''));
         setCurrentPlayer('X');
         setWinner(null);
         setIsComputerTurn(false);
     }
 
+    const onViewScorePress = (): void => {
+        navigate(navigation, 'Score');
+    }
+
+    //need to replace Text with own custom component
     const renderStatus = (): JSX.Element => {
         const winnerName = winner === 'X' ? strings.youWon : strings.cpuWon;
         const setPlayerTurn = currentPlayer === 'O' ? strings.computerTurn : strings.playerTurn;
@@ -110,12 +125,16 @@ const Home = (): JSX.Element => {
         }
     };
 
+    //need to replace Text with own custom component
     return (
         <View style={styles.container}>
             <Text style={styles.header}>Tic Tac Toe!</Text>
             {renderBoard()}
             <View style={styles.status}>{renderStatus()}</View>
-            <Button title="Start Game" onPress={startGame} />
+            <View style={styles.footerContainer}>
+                <Button title="Start Game" onPress={onStartGame} />
+                <Button title='View Score' onPress={onViewScorePress} />
+            </View>
         </View>
     );
 }
@@ -153,6 +172,11 @@ const styles = StyleSheet.create({
     statusText: {
         fontSize: 12,
         fontWeight: 'bold'
+    },
+    footerContainer: {
+        width: '100%',
+        flexDirection: 'row',
+        justifyContent: 'space-between'
     }
 });
 export default Home;
