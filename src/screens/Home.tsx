@@ -20,7 +20,7 @@ const Home = (): JSX.Element => {
     const [winner, setWinner] = useState(null);
     const [isComputerTurn, setIsComputerTurn] = useState(false);
 
-    const { playerScore, updatePlayerScore, updateComputerScore } = useContext(StoreContext);
+    const { updatePlayerScore, updateComputerScore } = useContext(StoreContext);
 
     const navigation = useNavigation();
 
@@ -133,7 +133,7 @@ const Home = (): JSX.Element => {
             <View style={styles.status}>{renderStatus()}</View>
             <View style={styles.footerContainer}>
                 <Button title="Start Game" onPress={onStartGame} />
-                <Button title='View Score' onPress={onViewScorePress} />
+                <Button title='Check Score' onPress={onViewScorePress} />
             </View>
         </View>
     );
@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        padding: 20
+        padding: 20,
     },
     header: {
         fontSize: 44,
