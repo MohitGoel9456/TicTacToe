@@ -28,34 +28,34 @@ jobs:
           cd android
           ./gradlew assembleRelease
 
-      - name: Generate Signed APK
-        run: |
-          cd app/build/outputs/apk/release/
-          jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore your-key.keystore app-release-unsigned.apk your-alias
-          zipalign -v 4 app-release-unsigned.apk your-app.apk
+      # - name: Generate Signed APK
+      #   run: |
+      #     cd app/build/outputs/apk/release/
+      #     jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore your-key.keystore app-release-unsigned.apk your-alias
+      #     zipalign -v 4 app-release-unsigned.apk your-app.apk
 
-  deploy:
-    runs-on: macOS-latest
-    needs: build
-    steps:
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '14.x'
+  # deploy:
+  #   runs-on: macOS-latest
+  #   needs: build
+  #   steps:
+  #     - name: Set up Node.js
+  #       uses: actions/setup-node@v2
+  #       with:
+  #         node-version: '14.x'
 
-      # Install Xcode and Cocoapods for iOS builds
-      - name: Install Xcode
-        run: sudo xcode-select --switch /Applications/Xcode_12.app/Contents/Developer
+  #     # Install Xcode and Cocoapods for iOS builds
+  #     - name: Install Xcode
+  #       run: sudo xcode-select --switch /Applications/Xcode_12.app/Contents/Developer
 
-      - name: Install Cocoapods
-        run: sudo gem install cocoapods
+  #     - name: Install Cocoapods
+  #       run: sudo gem install cocoapods
 
-      # Build iOS IPA
-      - name: Build iOS IPA
-        run: |
-          cd ios
-          xcodebuild -workspace YourApp.xcworkspace -scheme YourApp -configuration Release clean archive -archivePath YourApp.xcarchive CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY="iPhone Distribution" PROVISIONING_PROFILE="UUID_OF_YOUR_PROVISIONING_PROFILE"
-          xcodebuild -exportArchive -archivePath YourApp.xcarchive -exportOptionsPlist exportOptions.plist -exportPath .
+  #     # Build iOS IPA
+  #     - name: Build iOS IPA
+  #       run: |
+  #         cd ios
+  #         xcodebuild -workspace YourApp.xcworkspace -scheme YourApp -configuration Release clean archive -archivePath YourApp.xcarchive CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY="iPhone Distribution" PROVISIONING_PROFILE="UUID_OF_YOUR_PROVISIONING_PROFILE"
+  #         xcodebuild -exportArchive -archivePath YourApp.xcarchive -exportOptionsPlist exportOptions.plist -exportPath .
 
       # Upload iOS IPA to TestFlight or distribute to other platforms
       # Add your deployment steps here (e.g., using fastlane or other tools).
