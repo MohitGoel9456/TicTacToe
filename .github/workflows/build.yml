@@ -9,10 +9,35 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+    - name: Checkout
+      uses: actions/checkout@v2
+    - uses: actions/setup-node@master
+    - uses: c-hive/gha-yarn-cache@v1
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
+    - name: Install node modules
+      run: |
+        yarn install
+
+    # - name: Cache Gradle Wrapper
+    #   uses: actions/cache@v2
+    #   with:
+    #     path: ~/.gradle/wrapper
+    #     key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('gradle/wrapper/gradle-wrapper.properties') }}
+
+    # - name: Cache Gradle Dependencies
+    #   uses: actions/cache@v1
+    #   with:
+    #     path: ~/.gradle/caches
+    #     key: ${{ runner.os }}-gradle-caches-${{ hashFiles('gradle/wrapper/gradle-wrapper.properties') }}
+    #     restore-keys: |
+    #       ${{ runner.os }}-gradle-caches-
+
+    - name: Make Gradlew Executable
+      run: cd android && chmod +x ./gradlew
+
+    - name: Build Android Release
+      run: |
+        cd android && ./gradlew assembleRelease --no-daemon
 
       # Install Android SDK and React Native CLI for Android builds
       # - name: Install JDK 11 and Android SDK
@@ -23,10 +48,10 @@ jobs:
       #   run: npm install -g react-native-cli
 
       # Build Android APK and generate the signed APK
-      - name: Build Android APK
-        run: |
-          cd android
-          ./gradlew assembleRelease
+      # - name: Build Android APK
+      #   run: |
+      #     cd android
+      #     ./gradlew assembleRelease
 
       # - name: Generate Signed APK
       #   run: |
