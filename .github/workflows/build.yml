@@ -43,3 +43,25 @@ jobs:
     - name: Build Android Release
       run: |
         cd android && ./gradlew assembleRelease --no-daemon
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v1
+      with:
+        name: app-release.apk
+        path: android/app/build/outputs/apk/release/
+
+    - name: Distribute app via Firebase App Distribution
+      env:
+          firebaseToken: ${{ secrets.FIREBASE_TOKEN }}
+          firebaseGroups: ${{ secrets.FIREBASE_GROUPS }}
+          firebaseAppId: ${{ secrets.FIREBASE_APP_ID }}
+          notes: ${{ github.event.head_commit.message }}
+      run: |
+        yarn global add firebase-tools
+        export PATH="$(yarn global bin):$PATH"
+        firebase \
+          appdistribution:distribute android/app/build/outputs/apk/release/app-release.apk \
+          --app $firebaseAppId \
+          --release-notes "$notes" \
+          --groups "$firebaseGroups" \
+          --token "$firebaseToken"
