@@ -36,7 +36,7 @@ jobs:
 
     - name: Build Android Release
       run: |
-        cd android && ./gradlew assembleRelease 
+        cd android && ./gradlew assembleRelease --no-daemon
 
       # Install Android SDK and React Native CLI for Android builds
       # - name: Install JDK 11 and Android SDK
