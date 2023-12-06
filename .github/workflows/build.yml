@@ -13,16 +13,14 @@ jobs:
 
       - name: Set up Node.js
         uses: actions/setup-node@v2
-        with:
-          node-version: '14.x'
 
       # Install Android SDK and React Native CLI for Android builds
-      - name: Install JDK 11 and Android SDK
-        run: |
-          sudo apt-get install -y openjdk-11-jdk
-          sdkmanager "platform-tools" "platforms;android-30"
-      - name: Install React Native CLI
-        run: npm install -g react-native-cli
+      # - name: Install JDK 11 and Android SDK
+      #   run: |
+      #     sudo apt-get install -y openjdk-11-jdk
+      #     sdkmanager "platform-tools" "platforms;android-30"
+      # - name: Install React Native CLI
+      #   run: npm install -g react-native-cli
 
       # Build Android APK and generate the signed APK
       - name: Build Android APK
