@@ -1,67 +1,63 @@
-name: Development Distribution
+name: CI/CD for React Native
 
 on:
   push:
     branches:
-      - develop
+      - main
 
 jobs:
-  dev-distribution:
+  build:
     runs-on: ubuntu-latest
-    name: Development Distribution
     steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-    - uses: actions/setup-node@master
-    - uses: c-hive/gha-yarn-cache@v1
+      - uses: actions/checkout@v2
 
-    - name: Install node modules
-      run: |
-        yarn install
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14.x'
 
-    - name: Run test
-      run: |
-        yarn test-ci
+      # Install Android SDK and React Native CLI for Android builds
+      - name: Install JDK 11 and Android SDK
+        run: |
+          sudo apt-get install -y openjdk-11-jdk
+          sdkmanager "platform-tools" "platforms;android-30"
+      - name: Install React Native CLI
+        run: npm install -g react-native-cli
 
-    - name: Cache Gradle Wrapper
-      uses: actions/cache@v2
-      with:
-        path: ~/.gradle/wrapper
-        key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('gradle/wrapper/gradle-wrapper.properties') }}
+      # Build Android APK and generate the signed APK
+      - name: Build Android APK
+        run: |
+          cd android
+          ./gradlew assembleRelease
 
-    - name: Cache Gradle Dependencies
-      uses: actions/cache@v1
-      with:
-        path: ~/.gradle/caches
-        key: ${{ runner.os }}-gradle-caches-${{ hashFiles('gradle/wrapper/gradle-wrapper.properties') }}
-        restore-keys: |
-          ${{ runner.os }}-gradle-caches-
+      - name: Generate Signed APK
+        run: |
+          cd app/build/outputs/apk/release/
+          jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore your-key.keystore app-release-unsigned.apk your-alias
+          zipalign -v 4 app-release-unsigned.apk your-app.apk
 
-    - name: Make Gradlew Executable
-      run: cd android && chmod +x ./gradlew
+  deploy:
+    runs-on: macOS-latest
+    needs: build
+    steps:
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14.x'
 
-    - name: Build Android Release
-      run: |
-        cd android && ./gradlew assembleRelease --no-daemon
+      # Install Xcode and Cocoapods for iOS builds
+      - name: Install Xcode
+        run: sudo xcode-select --switch /Applications/Xcode_12.app/Contents/Developer
 
-    - name: Upload Artifact
-      uses: actions/upload-artifact@v1
-      with:
-        name: app-release.apk
-        path: android/app/build/outputs/apk/release/
+      - name: Install Cocoapods
+        run: sudo gem install cocoapods
 
-    - name: Distribute app via Firebase App Distribution
-      env:
-          firebaseToken: ${{ secrets.FIREBASE_TOKEN }}
-          firebaseGroups: ${{ secrets.FIREBASE_GROUPS }}
-          firebaseAppId: ${{ secrets.FIREBASE_APP_ID }}
-          notes: ${{ github.event.head_commit.message }}
-      run: |
-        yarn global add firebase-tools
-        export PATH="$(yarn global bin):$PATH"
-        firebase \
-          appdistribution:distribute android/app/build/outputs/apk/release/app-release.apk \
-          --app $firebaseAppId \
-          --release-notes "$notes" \
-          --groups "$firebaseGroups" \
-          --token "$firebaseToken"
+      # Build iOS IPA
+      - name: Build iOS IPA
+        run: |
+          cd ios
+          xcodebuild -workspace YourApp.xcworkspace -scheme YourApp -configuration Release clean archive -archivePath YourApp.xcarchive CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY="iPhone Distribution" PROVISIONING_PROFILE="UUID_OF_YOUR_PROVISIONING_PROFILE"
+          xcodebuild -exportArchive -archivePath YourApp.xcarchive -exportOptionsPlist exportOptions.plist -exportPath .
+
+      # Upload iOS IPA to TestFlight or distribute to other platforms
+      # Add your deployment steps here (e.g., using fastlane or other tools).
