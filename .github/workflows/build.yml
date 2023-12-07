@@ -34,9 +34,9 @@ jobs:
     - name: Make Gradlew Executable
       run: cd android && chmod +x ./gradlew
 
-    - name: Build Android Release
+    - name: Build Android Debug
       run: |
-        cd android && ./gradlew assembleRelease --no-daemon
+        cd android && ./gradlew assembleDebug --no-daemon
 
       # Install Android SDK and React Native CLI for Android builds
       # - name: Install JDK 11 and Android SDK
