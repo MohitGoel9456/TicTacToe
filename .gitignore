@@ -3,7 +3,6 @@ node_modules/
 ios/Pods/
 ios/Podfile.lock
 ios/Podfile.project.xcworkspace/xcuserdata/
-ios/Podfile.project.xcworkspace/xcshareddata/
 ios/build/
 ios/*.pbxuser
 ios/*.mode1v3
