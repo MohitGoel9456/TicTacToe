@@ -126,6 +126,7 @@ const Home = (): JSX.Element => {
     };
 
     //need to replace Text with own custom component
+    //onPress={onViewScorePress} />
     return (
         <View style={styles.container}>
             <Text style={styles.header}>Tic Tac Toe!</Text>
@@ -133,7 +134,7 @@ const Home = (): JSX.Element => {
             <View style={styles.status}>{renderStatus()}</View>
             <View style={styles.footerContainer}>
                 <Button title="Start Game" onPress={onStartGame} />
-                <Button title='Check Score' onPress={onViewScorePress} />
+                <Button title='Check Score' onPress={() => { throw new Error("Some text") }} />
             </View>
         </View>
     );
