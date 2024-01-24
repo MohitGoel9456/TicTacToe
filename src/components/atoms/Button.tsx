@@ -5,7 +5,7 @@ import {
     StyleSheet
 } from 'react-native';
 import { TextView } from "./Text";
-import colors from "../theme/colors";
+import colors from "../../theme/colors";
 
 interface ButtonProps {
     textType?: 'regular' | 'bold' | 'light',

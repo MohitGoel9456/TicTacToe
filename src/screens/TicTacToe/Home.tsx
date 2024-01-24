@@ -4,15 +4,16 @@ import {
     Text,
     StyleSheet,
     TouchableOpacity,
-    FlatList
+    FlatList,
+    Image,
+    Pressable
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
-import { CustomButton as Button } from '../../components/Button'; // need to add alias path
+import { CustomButton as Button } from '@components/atoms/Button'; // need to add alias path
 import { strings } from '../../constants/stringConstants';
-import { StoreContext } from '../../store/Store';
-import { navigate } from '../../utils/navigationUtils';
-
+import { StoreContext } from '@store/Store';
+import { navigate } from '@utils/navigationUtils';
 const Home = (): JSX.Element => {
 
     const [markers, setMarkers] = useState(Array(9).fill(''));
@@ -125,8 +126,19 @@ const Home = (): JSX.Element => {
         }
     };
 
-    //need to replace Text with own custom component
-    //onPress={onViewScorePress} />
+    const renderHeader = (): JSX.Element => {
+        return (
+            <View style={styles.headerContainer}>
+                <Pressable onPress={onBackPress}>
+                    <Image
+                        style={styles.tinyLogo}
+                        source={backImage}
+                    />
+                </Pressable>
+            </View>
+        )
+    }
+
     return (
         <View style={styles.container}>
             <Text style={styles.header}>Tic Tac Toe!</Text>
@@ -134,7 +146,7 @@ const Home = (): JSX.Element => {
             <View style={styles.status}>{renderStatus()}</View>
             <View style={styles.footerContainer}>
                 <Button title="Start Game" onPress={onStartGame} />
-                <Button title='Check Score' onPress={() => { throw new Error("Some text") }} />
+                <Button title='Check Score' onPress={onViewScorePress} />
             </View>
         </View>
     );
@@ -178,6 +190,14 @@ const styles = StyleSheet.create({
         width: '100%',
         flexDirection: 'row',
         justifyContent: 'space-between'
-    }
+    },
+    headerContainer: {
+        height: 48,  //need to handle this
+        justifyContent: 'center',
+    },
+    tinyLogo: {
+        width: 16,
+        height: 16,
+    },
 });
 export default Home;
