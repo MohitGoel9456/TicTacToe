@@ -4,7 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Home from 'screens/TicTacToe/Home';
 import ScoreScreen from 'screens/TicTacToe/ScoreScreen';
 import Dashboard from 'screens/Home';
-import FeedsScreen from 'screens/Feeds/FeedsScreen';
+import FeedsScreen from 'screens/Feeds/screen/FeedsScreen';
 import Header from 'components/molecules/Header';
 
 const Stack = createNativeStackNavigator();
