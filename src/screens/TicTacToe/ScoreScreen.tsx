@@ -8,8 +8,8 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
-import { StoreContext } from "../store/Store";
-import backImage from '../assets/back.png';  //need to use SVG image
+import { StoreContext } from "../..//store/Store";
+import backImage from '../../assets/back.png';
 
 const ScoreScreen = (): JSX.Element => {
     const { playerScore, computerScore } = useContext(StoreContext);

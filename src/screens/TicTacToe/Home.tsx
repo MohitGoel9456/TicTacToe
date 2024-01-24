@@ -8,10 +8,10 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
-import { CustomButton as Button } from '../components/Button'; // need to add alias path
-import { strings } from '../constants/stringConstants';
-import { StoreContext } from '../store/Store';
-import { navigate } from '../utils/navigationUtils';
+import { CustomButton as Button } from '../../components/Button'; // need to add alias path
+import { strings } from '../../constants/stringConstants';
+import { StoreContext } from '../../store/Store';
+import { navigate } from '../../utils/navigationUtils';
 
 const Home = (): JSX.Element => {
 
