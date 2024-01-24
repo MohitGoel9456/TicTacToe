@@ -191,13 +191,5 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between'
     },
-    headerContainer: {
-        height: 48,  //need to handle this
-        justifyContent: 'center',
-    },
-    tinyLogo: {
-        width: 16,
-        height: 16,
-    },
 });
 export default Home;

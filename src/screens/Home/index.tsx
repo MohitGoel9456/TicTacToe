@@ -25,7 +25,7 @@ const Dashboard = (): React.ReactElement => {
     }
 
     const handleOnFeedsClick = () => {
-
+        navigate(navigation, 'FeedScreen');
     }
 
     return (
