@@ -41,3 +41,5 @@ android/*.iml
 yarn.lock
 .expo
 __generated__/
+
+src/keys

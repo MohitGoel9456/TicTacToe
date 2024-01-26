@@ -1,27 +1,35 @@
 import { apiConfig } from 'config/apiConfig';
 import { useGetFeedsQuery } from 'hooks/useGetFeedsQuery';
-import React, { useEffect } from 'react';
+import React, { useState } from 'react';
 import {
     View,
     Text,
     StyleSheet,
     FlatList,
-    Image
 } from 'react-native';
 import { getWidth } from 'utils/deviceConfigUtils';
+import FastImage from 'react-native-fast-image'
 
 
 const FeedsScreen = () => {
-    const { data, isloading, error } = useGetFeedsQuery(apiConfig.baseUrl);
+    const [params, setParams] = useState({
+        page: 1,
+        per_page: 20
+    });
+    const { data, isloading, error } = useGetFeedsQuery(apiConfig.baseUrl, params);
 
     const renderFeed = ({ item }: { item: any }) => {
         return (
-            <Image
-                style={styles.feedImage}
-                source={{
-                    uri: item.urls.regular,
-                }}
-            />
+            <View style={styles.itemContainer}>
+                <Text>{item.user.username}</Text>
+                <FastImage
+                    style={styles.feedImage}
+                    source={{
+                        uri: item.urls.regular,
+                    }}
+                />
+                <Text>{item.likes}</Text>
+            </View>
         )
     }
 
@@ -30,6 +38,14 @@ const FeedsScreen = () => {
             <Text>No Feeds available</Text>
         )
     }
+    console.log("length ", data?.length)
+    console.log("datea  ", data)
+
+    const handleEndReached = () => {
+        // Load more data when the end of the list is reached
+        console.log("handleEndReached")
+        setParams((prevParams) => ({ ...prevParams, page: params.page + 1 }));
+    }
 
     return (
         <View style={styles.container}>
@@ -37,7 +53,9 @@ const FeedsScreen = () => {
             <FlatList
                 data={data}
                 renderItem={renderFeed}
-                keyExtractor={item => item.id}
+                keyExtractor={(item, index) => item.id + index.toString()}
+                onEndReached={handleEndReached}
+                onEndReachedThreshold={0.5}
             />
         </View>
     )
@@ -45,13 +63,14 @@ const FeedsScreen = () => {
 
 const styles = StyleSheet.create({
     container: {
-        padding: 16
+        paddingVertical: 16
     },
     feedImage: {
         height: getWidth(),
         width: getWidth(),
-        marginBottom: 16,
-        paddingHorizontal: 16
+    },
+    itemContainer: {
+        marginBottom: 16
     }
 })
 
